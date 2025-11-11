@@ -22,3 +22,6 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+mysql/data/
+mysql/scripts/
+portainer_data/

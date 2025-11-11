@@ -1,0 +1,54 @@
+networks:
+    simple_backend_app:
+        name: simple_backend_app
+
+services:
+    php-apache:
+        image: webdevops/php-apache-dev:8.4
+        container_name: api-laravel-back
+        restart: always
+        ports:
+            - "80:80"
+        volumes:
+            - ./:/app
+        environment:
+            WEB_DOCUMENT_ROOT: /app/public
+        depends_on:
+            - mysqldb-aula
+        networks:
+            simple_backend_app:
+                aliases:
+                    - api-laravel-back
+
+    mysqldb-aula:
+        image: mysql:8.4
+        container_name: mysql-aula
+        restart: always
+        ports:
+            - "3306:3306"
+        volumes:
+            - ./mysql/data:/var/lib/mysql
+            - ./mysql/scripts:/docker-entrypoint-initdb.d
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: laravel_user
+            MYSQL_PASSWORD: laravel_pass
+        networks:
+            simple_backend_app:
+                aliases:
+                    - mysql
+
+    portainer-aula:
+        image: portainer/portainer-ce:latest
+        container_name: portainer-aula
+        command: -H unix:///var/run/docker.sock
+        restart: always
+        ports:
+            - "9000:9000"
+            - "8000:8000"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./portainer_data:/data
+        networks:
+            - simple_backend_app
