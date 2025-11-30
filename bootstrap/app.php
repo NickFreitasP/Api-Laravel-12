@@ -46,5 +46,12 @@ return Application::configure(basePath: dirname(__DIR__))
             ], 404);
 
     });
-    })
+    //    $exceptions->render(function (Request $request, $e) {
+
+
+
+
+    // });
+
+   })
     ->create();

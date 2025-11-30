@@ -1,13 +1,9 @@
 <?php
  namespace App\Services\Closeds;
 
-use App\Exceptions\ModelNotFoundException ;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Traits\ApiResponses;
-use Symfony\Component\HttpFoundation\Response;
 
 class UserService{
 
@@ -29,10 +25,10 @@ class UserService{
     }
 
     // Get a user by id
-    public function show(int $id) : User
+    public function show(int $id,string $message = "User not found") : User
 
     {
-       return $this->findlWithMessage($this->user,$id,"User not found");
+       return $this->findlWithMessage($this->user,$id,$message);
     }
 
     // Create a new user
@@ -46,7 +42,9 @@ class UserService{
     public function update(int $id , array $data) : User
     {
         // Find the user
-        $user = $this->show($id);
+       $message =  'Não foi possível atualizar: usuário não encontrado';
+
+        $user = $this->show($id,$message);
 
         // Update data user
         $user->update($data);
@@ -57,12 +55,13 @@ class UserService{
 
     public function delete( int $id) : bool
     {
-
         // Find User
-        $user = $this->show($id);
+
+        $message = "Não foi possível deletar: usuário não encontrado";
+
+        $user = $this->show($id,$message);
 
         return $user->delete();
-
 
     }
 

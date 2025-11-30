@@ -21,14 +21,13 @@ trait ApiResponses {
 
     }
 
-    protected function handleServiceResponse(mixed $result) : JsonResponse
+    protected function handleServicejsonResponse(mixed $result) : JsonResponse
     {
 
-          if ($result instanceof JsonResponse) {
-            return $result;
-        }
-
-        return response()->json($result);
+        return response()->json([
+            "success" => true,
+            "data" => $result
+        ]);
 
     }
 

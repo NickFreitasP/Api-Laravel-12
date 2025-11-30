@@ -22,31 +22,42 @@ class UserController extends Controller
     }
     public function index() : JsonResponse{
 
-        return response()->json($this->user_service->get());
+      $result = $this->user_service->get();
+
+      return $this->handleServicejsonResponse($result);
     }
 
    public function show(int $id) : JsonResponse
    {
-      return response()->json($this->user_service->show($id));
+
+     $result = $this->user_service->show($id);
+
+     return $this->handleServicejsonResponse($result);
 
    }
    public function store(Request $request) : JsonResponse {
 
-     return response()->json($this->user_service->store($request->all()));
+       $result = $this->user_service->store($request->all());
+
+       return $this->handleServicejsonResponse($result);
 
    }
 
    public function update(Request $request , int $id) : JsonResponse
    {
 
-     return response()->json($this->user_service->update($id,$request->all()));
+       $result = $this->user_service->update($id, $request->all());
+
+       return $this->handleServicejsonResponse($result);
 
    }
 
    public function delete ( int $id) : JsonResponse
    {
 
-     return response()->json($this->user_service->delete($id));
+      $result = $this->user_service->delete($id);
+
+       return $this->handleServicejsonResponse($result);
    }
 
 }
