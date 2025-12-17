@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -42,16 +43,23 @@ return Application::configure(basePath: dirname(__DIR__))
        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
 
             return response()->json([
+                'success' => false,
                 'message' => 'Record not found.'
             ], 404);
 
-    });
-    //    $exceptions->render(function (Request $request, $e) {
+       });
+       $exceptions->render(function ( UniqueConstraintViolationException $e , Request $request) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'O email fornecido já está em uso. Por favor, escolha outro.'
+            ], 409);
+
+        });
 
 
 
 
-    // });
 
    })
     ->create();

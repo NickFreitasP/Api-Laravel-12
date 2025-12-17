@@ -3,14 +3,18 @@
 
 use Illuminate\Database\Eloquent\Collection;
 use App\Traits\ApiResponses;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Symfony\Component\HttpFoundation\Request;
 
 class BaseService{
 
     use ApiResponses;
 
     protected ?Model $model;
+
 
     // Get all users
     public function get(): Collection
@@ -26,24 +30,25 @@ class BaseService{
     }
 
     // Create a new user
-    public function store(array $data) : Model
+    public function store() : Model
     {
-
-        return $this->model->create($data);
+        return $this->model->create($this->validate());
     }
 
     // Update data user
-    public function update(int $id , array $data) : Model
+    public function update(int $id ) : Model
     {
         // Find the user
-       $message =  'Não foi possível atualizar: usuário não encontrado';
+
+
+        $message =  'Não foi possível atualizar: usuário não encontrado';
 
         $user = $this->show($id,$message);
 
         // Update data user
-        $user->update($data);
+        $user->update($this->validate());
 
-        return $user;
+        return $user->refresh();
 
     }
 
@@ -68,6 +73,51 @@ class BaseService{
 
     }
 
+    private function validate( Object | String  $requestClass = "" ) : array
+    {
+
+        if($requestClass == "" ){
+
+          $requestClass =  $this->defineBindValueRequest();
+        }
+
+        $requestClass = is_object($requestClass) ? $requestClass : new $requestClass();
+        return Validator::validate(Request()->all(),$requestClass->rules(),$requestClass->messages());
+
+    }
+
+
+    private function defineBindValueRequest() : string
+    {
+
+        $action = Request()->route()->getActionMethod();
+
+        $requestPrefixes = ["App","Http" ,"Requests"];
+
+       foreach(explode("\\",static::class) as $prefix){
+
+        if($prefix !== "App" and $prefix !== "Services" and $prefix !== class_basename(static::class) ){
+
+            $requestPrefixes[] =  $prefix;
+
+        }
+       }
+
+       $requestPrefixes[] = Str::replace("Service","",class_basename(static::class));
+       $requestPrefixes[] = Str::ucfirst($action) . "Request";
+
+       $class = implode("\\",$requestPrefixes);
+
+       if(!class_exists($class)){
+
+        throw new Exception("This request class $class not exist");
+
+       }
+
+    //    dd($class);
+       return $class;
+
+    }
 
 
  };

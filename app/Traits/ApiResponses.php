@@ -2,10 +2,8 @@
 
 namespace App\Traits;
 
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use App\Exceptions\ModelNotFoundException ;
 
 trait ApiResponses {
