@@ -11,7 +11,8 @@ class BaseController extends Controller
 {
     use ApiResponses;
 
-    protected   $service;
+    protected $service;
+
 
     public function index() : JsonResponse{
 
@@ -28,18 +29,18 @@ class BaseController extends Controller
      return $this->handleServicejsonResponse($result);
 
    }
-   public function store(Request $request) : JsonResponse {
+   public function store() : JsonResponse {
 
-       $result = $this->service->store($request->all());
+       $result = $this->service->store();
 
        return $this->handleServicejsonResponse($result);
 
    }
 
-   public function update(Request $request , int $id) : JsonResponse
+   public function update( int $id) : JsonResponse
    {
 
-       $result = $this->service->update($id, $request->all());
+       $result = $this->service->update($id);
 
        return $this->handleServicejsonResponse($result);
 
@@ -58,6 +59,8 @@ class BaseController extends Controller
        $this->service = $service;
 
    }
+
+
 
 
 }

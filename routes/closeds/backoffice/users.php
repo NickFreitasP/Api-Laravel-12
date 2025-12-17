@@ -1,11 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 Use App\Http\Controllers\Closeds\Backoffice\UserController;
-use App\Models\User;
-
-
 
 Route::controller(UserController::class)->group(function(){
     Route::prefix("user")->group(function(){
