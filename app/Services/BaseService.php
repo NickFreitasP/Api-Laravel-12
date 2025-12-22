@@ -5,21 +5,23 @@ use Illuminate\Database\Eloquent\Collection;
 use App\Traits\ApiResponses;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
-use Symfony\Component\HttpFoundation\Request;
 
 class BaseService{
 
     use ApiResponses;
 
     protected ?Model $model;
-
-
+    protected bool $enablePaginate = true;
+    protected int $perPage = 50;
     // Get all users
-    public function get(): Collection
+    public function get(): LengthAwarePaginator |  Collection
     {
-        return $this->model->all();
+        if(!$this->enablePaginate){
+           return $this->model->all();
+        }
+        return $this->model->paginate($this->setNumberPages());
     }
 
     // Get a user by id
@@ -32,6 +34,7 @@ class BaseService{
     // Create a new user
     public function store() : Model
     {
+        // dd($this->validate());
         return $this->model->create($this->validate());
     }
 
@@ -81,8 +84,7 @@ class BaseService{
           $requestClass =  $this->defineBindValueRequest();
         }
 
-        $requestClass = is_object($requestClass) ? $requestClass : new $requestClass();
-        return Validator::validate(Request()->all(),$requestClass->rules(),$requestClass->messages());
+        return app($requestClass)->validated();
 
     }
 
@@ -116,8 +118,29 @@ class BaseService{
 
     //    dd($class);
        return $class;
+    }
+
+    public function desablePagination() :  bool
+    {
+      return  $this->enablePaginate = false;
 
     }
+    protected function setNumberPages() : int
+    {
+        if(request()->get("per_page")){
+            $perPage = request()->get("per_page");
+        }
+
+        if($perPage >= 1 && $perPage <= 1000){
+
+            return  $this->perPage = $perPage ;
+
+        }
+
+        return $this->perPage;
+
+    }
+
 
 
  };
