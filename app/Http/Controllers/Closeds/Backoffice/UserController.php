@@ -14,6 +14,8 @@ class UserController extends BaseController
     {
          $this->setSevice(new UserService());
          $this->service->setModel( User::class );
+         $this->service->desablePagination();
+
 
     }
 
